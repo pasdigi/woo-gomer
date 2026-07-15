@@ -30,7 +30,7 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
     public function init_form_fields() {
         $this->form_fields = array(
             'enabled' => array(
-                'title'   => 'Enable/Disable',
+                'title   => 'Enable/Disable',
                 'type'    => 'checkbox',
                 'label'   => 'Aktifkan Woo Gomer QRIS',
                 'default' => 'yes'
@@ -123,7 +123,10 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
         $data = json_decode( $raw_body, true );
 
         if ( isset($data['status']) && $data['status'] === 'success' ) {
-            $order->update_meta_data( '_woo_gomer_raw_qris', $data['raw_qris'] );
+            // PERBAIKAN: Bersihkan karakter &amp; dari API sebelum disimpan ke Database WooCommerce
+            $clean_raw_qris = wp_specialchars_decode( $data['raw_qris'], ENT_QUOTES );
+            $order->update_meta_data( '_woo_gomer_raw_qris', $clean_raw_qris );
+
             // CATAT WAKTU SERVER SAAT INI UNTUK PATOKAN 15 MENIT
             $order->update_meta_data( '_woo_gomer_generated_time', time() ); 
             $order->save();
@@ -164,6 +167,9 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
 
         $raw_qris = $order->get_meta( '_woo_gomer_raw_qris' );
         if ( ! $raw_qris ) return;
+        
+        // PERBAIKAN: Bersihkan ulang karakter &amp; sebelum dirender ke javascript (Untuk mengatasi pesanan lama yang telanjur menyimpan error)
+        $raw_qris = wp_specialchars_decode( $raw_qris, ENT_QUOTES );
         
         echo '<div style="text-align:center; padding:15px; border: 1px solid #eee; border-radius:10px; background:#fafafa;">';
         
