@@ -3,7 +3,7 @@
  * Plugin Name: Woo Gopay Merchant QRIS
  * Plugin URI: https://pasdigi.id
  * Description: Integrasi QRIS Gopay Merchant full fitur sistem invoice tanpa kode unik.
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: Kangarifar
  * Author URI: https://fb.me/kangarifar
  * Text Domain: woo-gomer
