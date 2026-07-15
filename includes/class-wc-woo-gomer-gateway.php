@@ -30,7 +30,7 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
     public function init_form_fields() {
         $this->form_fields = array(
             'enabled' => array(
-                'title   => 'Enable/Disable',
+                'title'   => 'Enable/Disable',
                 'type'    => 'checkbox',
                 'label'   => 'Aktifkan Woo Gomer QRIS',
                 'default' => 'yes'
