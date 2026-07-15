@@ -123,10 +123,9 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
         $data = json_decode( $raw_body, true );
 
         if ( isset($data['status']) && $data['status'] === 'success' ) {
-            // PERBAIKAN: Bersihkan karakter &amp; dari API sebelum disimpan ke Database WooCommerce
             $clean_raw_qris = wp_specialchars_decode( $data['raw_qris'], ENT_QUOTES );
             $order->update_meta_data( '_woo_gomer_raw_qris', $clean_raw_qris );
-
+            
             // CATAT WAKTU SERVER SAAT INI UNTUK PATOKAN 15 MENIT
             $order->update_meta_data( '_woo_gomer_generated_time', time() ); 
             $order->save();
@@ -168,7 +167,6 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
         $raw_qris = $order->get_meta( '_woo_gomer_raw_qris' );
         if ( ! $raw_qris ) return;
         
-        // PERBAIKAN: Bersihkan ulang karakter &amp; sebelum dirender ke javascript (Untuk mengatasi pesanan lama yang telanjur menyimpan error)
         $raw_qris = wp_specialchars_decode( $raw_qris, ENT_QUOTES );
         
         echo '<div style="text-align:center; padding:15px; border: 1px solid #eee; border-radius:10px; background:#fafafa;">';
@@ -192,9 +190,9 @@ class WC_Woo_Gomer_Gateway extends WC_Payment_Gateway {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                // Render QR Code
+                // Render QR Code (Hapus esc_js di sini agar tidak di-encode lagi menjadi &amp;)
                 new QRCode(document.getElementById("woo-gomer-qr"), {
-                    text: "<?php echo esc_js($raw_qris); ?>",
+                    text: "<?php echo $raw_qris; ?>",
                     width: 250, 
                     height: 250,
                     correctLevel : QRCode.CorrectLevel.H
